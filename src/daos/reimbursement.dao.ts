@@ -8,8 +8,8 @@ export async function findAllreimbursement() {
   let client: PoolClient;
   try {
     client = await connectionPool.connect();
-    const result = await client.query('SELECT * FROM ers_api.users as u RIGHT JOIN ers_api.reimbursement as re ON u.user_id =re.author;');
-      // 'SELECT * FROM ers_api.reimbursement');
+    const result = await client.query('SELECT * FROM ers.users as u RIGHT JOIN ers.reimbursement as re ON u.user_id =re.author;');
+      // 'SELECT * FROM ers.reimbursement');
     // INNER JOIN reimbursement_status ON (reimbursement.status = reimbursement_status.status_id);');
     return result.rows.map(convertSqlReimb);
   } catch (err) {
@@ -24,8 +24,8 @@ export async function findById(id: number) {
   let client: PoolClient;
   try {
     client = await connectionPool.connect();
-    const queryString = 'SELECT * FROM ers_api.reimbursement WHERE reimbursement_id = $1';
-    // 'SELECT * FROM ers_api.users as u RIGHT JOIN ers_api.reimbursement as re ON u.user_id =re.author;';
+    const queryString = 'SELECT * FROM ers.reimbursement WHERE reimbursement_id = $1';
+    // 'SELECT * FROM ers.users as u RIGHT JOIN ers.reimbursement as re ON u.user_id =re.author;';
     //
     console.log(client);
     const result = await client.query(queryString, [id]);
@@ -58,12 +58,12 @@ export async function findByAuthor(Author: string) {
     client = await connectionPool.connect();
     console.log('this is athor: ');
     console.log(Author);
-    const queryString = 'SELECT * FROM ers_api.user WHERE user_name = $1';
+    const queryString = 'SELECT * FROM ers.user WHERE user_name = $1';
     const result = await client.query(queryString, [Author]);
     const username = result.rows[0].user_name;
     const userId = result.rows[0].user_id;
     console.log(username);
-    const secQueryString = 'SELECT * FROM ers_api.reimbursement WHERE author = $1';
+    const secQueryString = 'SELECT * FROM ers.reimbursement WHERE author = $1';
     const finalResult = await client.query(queryString, [userId]);
     // convert db results into actual spaceships
     const reimb = result.rows.map(convertSqlReimb);
@@ -82,7 +82,7 @@ export async function addReimb(reimb: SqlReimbursement) {
     client = await connectionPool.connect();
     console.log('Adding user: ');
     console.log(reimb);
-    const queryString = 'INSERT INTO ers_api.reimbursement (author, amount,date_submitted, date_resolved, description, resolver, status, reim_type) VALUES ($1, $2, $3, $4, $5, $6, $7,$8);';
+    const queryString = 'INSERT INTO ers.reimbursement (author, amount,date_submitted, date_resolved, description, resolver, status, reim_type) VALUES ($1, $2, $3, $4, $5, $6, $7,$8);';
     const result = await client.query(queryString, [reimb.author, reimb.amount, reimb.date_submitted, reimb.date_resolved, reimb.description, reimb.resolver, reimb.status, reimb.reim_type]);
     console.log(`USER ADDED: `);
     console.log(result.rows[0]);
@@ -99,7 +99,7 @@ export async function addReimb(reimb: SqlReimbursement) {
 //   let client: PoolClient;
 //   try {
 //     client = await connectionPool.connect();
-//     const queryString = `INSERT INTO ers_api.spaceship
+//     const queryString = `INSERT INTO ers.spaceship
 //     (ship_owner, ship_name, weight, speed, description)
 //     VALUES ($1, $2, $3, $4, $5)
 //     RETURNING ship_id as shipId`;

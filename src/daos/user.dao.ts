@@ -9,7 +9,7 @@ export async function findUsersById(id: number) {
     try {
       client = await connectionPool.connect();
       console.log('is this getting call? ' + id);
-      const queryString = 'SELECT * FROM ers_api.users WHERE user_id =$1;';
+      const queryString = 'SELECT * FROM ers.users WHERE user_id =$1;';
       const result = await client.query(queryString, [id]);
       console.log(result.rows);
       const user = result.rows[0];
@@ -27,8 +27,8 @@ export async function getAllUsers() {
   let client: PoolClient;
     try {
       client = await connectionPool.connect();
-      const queryString = `SELECT * FROM ers_api.users
-      INNER JOIN ers_api.role ON (user_role = role_id);`;
+      const queryString = `SELECT * FROM ers.users
+      INNER JOIN ers.role ON (user_role = role_id);`;
       const result = await client.query(queryString);
       console.log('Retrieving All users');
       return result.rows.map(convertSqlUser);
@@ -66,7 +66,7 @@ export async function update(user: SqlUser, id: number) {
     console.log (userSqlR);
     console.log('this fields would be added after termination.');
     console.log (userData);
-    const queryString = `UPDATE ers_api.users SET ${userData} WHERE user_id =${id}};`;
+    const queryString = `UPDATE ers.users SET ${userData} WHERE user_id =${id}};`;
     console.log('MEMEMEMEME: ' + queryString);
     // const userData = [ship.owner, ship.name, ship.weight, ship.speed, ship.description];
     const result = await client.query(queryString,  [userData, id]);
@@ -87,7 +87,7 @@ export async function addUser(user: SqlUser) {
     client = await connectionPool.connect();
     console.log('Adding user: ');
     console.log(user);
-    const queryString = 'INSERT INTO ers_api.users (user_name, user_password, first_name, last_name, email, user_role) VALUES ($1, $2, $3, $4, $5, $6);';
+    const queryString = 'INSERT INTO ers.users (user_name, user_password, first_name, last_name, email, user_role) VALUES ($1, $2, $3, $4, $5, $6);';
     const result = await client.query(queryString, [user.user_name, user.user_password, user.first_name, user.last_name, user.email, user.user_role ]);
     console.log(`USER ADDED: `);
     console.log(result.rows[0]);
@@ -105,8 +105,8 @@ export async function findByUsernameAndPassword(username: string, password: stri
   let client: PoolClient;
   try {
     client = await connectionPool.connect();
-    const queryString = `SELECT * FROM ers_api.users
-        INNER JOIN ers_api.role ON (user_role = role_id) WHERE user_name = $1 AND user_password = $2;`;
+    const queryString = `SELECT * FROM ers.users
+        INNER JOIN ers.role ON (user_role = role_id) WHERE user_name = $1 AND user_password = $2;`;
 
     const result = await client.query(queryString, [username, password]);
     const user = result.rows[0];
